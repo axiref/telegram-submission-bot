@@ -71,21 +71,28 @@ def process_msg(bot, update):
             if submission_list[str(CONFIG['Group_ID']) + ':'
                                + str(msg.message_id)]['posted'] == True:
                 return
-            if submission_list[str(CONFIG['Group_ID']) + ':'
-                               + str(msg.message_id)]['type'] == 'real':
-                post = real_name_post(bot, msg,
-                        update.message.from_user)
-            elif submission_list[str(CONFIG['Group_ID']) + ':'
-                                 + str(msg.message_id)]['type'] \
-                == 'anonymous':
-
-                post = anonymous_post(bot, msg,
-                        update.message.from_user)
             if update.message.text != None:
-                bot.send_message(chat_id=CONFIG['Publish_Channel_ID'],
-                                 text=update.message.text,
-                                 reply_to_message_id=post.message_id)
-            return
+                # 稿件未通过
+                bot.edit_message_text(text="新投稿\n投稿人: ["
+                                          + submission_list[str(CONFIG['Group_ID'])
+                                          + ':' + str(msg.message_id)]['Sender_Name']
+                                          + '](tg://user?id='
+                                          + str(submission_list[str(CONFIG['Group_ID'])
+                                          + ':' + str(msg.message_id)]['Sender_ID'])
+                                          + """)
+来源: 保留
+审稿人: [""" + update.message.from_user.name
+                                          + '](tg://user?id=' + str(update.message.from_user.id)
+                                          + ")\n投稿被拒绝，理由:\n"+update.message.text, chat_id=CONFIG['Group_ID'],
+                                          parse_mode=telegram.ParseMode.MARKDOWN,
+                                          message_id=submission_list[str(CONFIG['Group_ID'
+                                          ]) + ':' + str(msg.message_id)]['Markup_ID'])
+                bot.send_message(chat_id=submission_list[str(CONFIG['Group_ID'])
+                                 + ':' + str(msg.message_id)]['Sender_ID'],
+                                 text='管理员：'+update.message.text,
+                                 reply_to_message_id=submission_list[str(CONFIG['Group_ID'
+                                 ]) + ':' + str(msg.message_id)]['Original_MsgID'])
+                return
     if update.message.from_user.id == update.message.chat_id:
         markup = \
             telegram.InlineKeyboardMarkup([[telegram.InlineKeyboardButton("是"
@@ -245,7 +252,7 @@ def process_callback(bot, update):
         return
     msg = "新投稿\n投稿人: [" + query.message.reply_to_message.from_user.name \
         + '](tg://user?id=' \
-        + str(query.message.reply_to_message.from_user.id) + ")\n来源: "
+        + str(query.message.reply_to_message.from_user.id) + ")\n拒绝投稿请直接回复以上信息，可多次回复\n\n来源: "
     fwd_msg = bot.forward_message(chat_id=CONFIG['Group_ID'],
                                   from_chat_id=query.message.chat_id,
                                   message_id=query.message.reply_to_message.message_id)
