@@ -21,6 +21,9 @@
 python main.py
 ```
 
+新功能！
+可以拒绝稿件，直接回复稿件即可拒绝。
+
 ## 使用
 ### 投稿
 ![Screenshot](https://github.com/Netrvin/telegram-submission-bot/raw/master/Readme_Img/Screenshot1.jpg)
